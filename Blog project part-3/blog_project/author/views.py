@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from author.forms import RegisterForm, ChangeUser
 from posts.models import Post
 from django.contrib.auth.views import LoginView, LogoutView
-
+from django.utils.decorators import method_decorator
 
 from django.urls import reverse_lazy
 # Create your views here.
@@ -43,7 +43,7 @@ def user_login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'register.html', {'form':form,'type':'Login'})
-    
+@method_decorator(login_required, name="dispatch") 
 class UserLoginView(LoginView):
     template_name = 'register.html'
     def get_success_url(self):

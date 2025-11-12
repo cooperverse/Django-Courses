@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from posts.forms import PostForm, CommentForm
 from posts.models import Post
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 # Create your views here.
 @login_required
@@ -18,6 +19,7 @@ def add_post(request):
     
     return render(request,'add_post.html', {'add_post': add_post})
 # Class Base View Add Post
+@method_decorator(login_required, name='dispatch')
 class AddPostCreateView(CreateView):
     model = Post
     form_class = PostForm
@@ -41,6 +43,7 @@ def edit_post(request,id):
     return render(request,'add_post.html', {'add_post': add_post})
 
 # Class Base View Edit Post 
+@method_decorator(login_required, name='dispatch')
 class EditPostUpdateView(UpdateView):
     model = Post
     form_class = PostForm
@@ -54,12 +57,13 @@ def delete_post(request,id):
     return redirect("my_blogs")
 
 # Class Base View Add Post
+@method_decorator(login_required, name='dispatch')
 class DeletePostDeleteView(DeleteView):
     model = Post
     pk_url_kwarg = 'id'
     template_name = "delete_post.html" 
     success_url = reverse_lazy('home')
-    
+@method_decorator(login_required, name='dispatch')   
 class DetailPostView(DetailView):
     model = Post
     pk_url_kwarg = 'id'
@@ -67,7 +71,6 @@ class DetailPostView(DetailView):
     def post(self, request, *args, **kwargs):
         comment_form = CommentForm(data = self.request.POST)
         post = self.get_object()
-
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
